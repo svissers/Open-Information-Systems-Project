@@ -50,7 +50,7 @@ target		:recipe{id} a :Recipe ; :name {name} ; :servings {servings}^^xsd:nonNega
 source		select "id", "name", "servings" from "Recipes"
 
 mappingId	CookingStep(WithIngredient)
-target		:recipe{recipeId} :ConsistsOf :cookingstep{recipeId}_{order} . :cookingstep{recipeId}_{order} a :CookingStep ; :order {order}^^xsd:nonNegativeInteger ; :timeRequired {time} ; :description {instructions} . 
+target		:recipe{recipeId} :ConsistsOf :cookingstep{recipeId}_{order} . :cookingstep{recipeId}_{order} a :CookingStep ; :order {order}^^xsd:nonNegativeInteger ; :timeRequired {time}^^xsd:nonNegativeInteger ; :description {instructions} . 
 source		SELECT * FROM "CookingSteps"
 
 mappingId	Add Ingredient to IngredientCategory
