@@ -1,0 +1,88 @@
+[PrefixDeclaration]
+:		http://example.com/thelastrecipe/
+owl:		http://www.w3.org/2002/07/owl#
+rdf:		http://www.w3.org/1999/02/22-rdf-syntax-ns#
+tlr:		http://example.com/thelastrecipe#
+xml:		http://www.w3.org/XML/1998/namespace
+xsd:		http://www.w3.org/2001/XMLSchema#
+obda:		https://w3id.org/obda/vocabulary#
+rdfs:		http://www.w3.org/2000/01/rdf-schema#
+w3xml:		http://www.w3.org/TR/xmlschema11-2#
+
+[MappingDeclaration] @collection [[
+mappingId	MealCategory
+target		:mealcategory{id} a :MealCategory ; :name {name} ; :description {description} . 
+source		SELECT "id", "name", "description"
+			FROM "MealCategories"
+
+mappingId	Tool
+target		:tool{id} a :Tool , :Tool ; :name {name} ; :description {description} . 
+source		SELECT  "id", "name", "description"
+			FROM "Tools"
+
+mappingId	Ingredient
+target		:ingredient{id} a :Ingredient ; :calories {calories}^^xsd:nonNegativeInteger ; :name {name} ; :unit {unit} ; :pricePerUnit {price}^^xsd:nonNegativeInteger ; :proteins {proteins}^^xsd:nonNegativeInteger . 
+source		select "id", "image", "name", "price", "unit", "proteins", "calories" from "PUBLIC"."Ingredients"
+
+mappingId	IngredientCategory
+target		:ingredientcategory{id} a :IngredientCategory ; :name {name} ; :description {description} . 
+source		SELECT "id", "name", "description"
+			FROM "IngredientCategories"
+
+mappingId	CookingStepWithIngredient (IngredientAmounts table)
+target		:cookingstep{recipeId}_{order} a :CookingStepWithIngredient ; :amount {amount}^^xsd:double ; :HasIngredient :{ingredientId} . 
+source		SELECT "recipeId", "order", "amount", CONCAT('ingredient', "ingredientId") AS "ingredientId" FROM "IngredientAmounts" am
+			INNER JOIN "CookingSteps" cs ON cs."ingredients" = am."id"
+
+mappingId	CookingStep(WithIngredient) tools
+target		:cookingstep{recipeId}_{order} :UsesTool :{toolId} . 
+source		SELECT "recipeId", "order", CONCAT('tool', "tools") AS "toolId" FROM "CookingSteps"
+			WHERE "tools" IS NOT NULL
+
+mappingId	CookingStepWithIngredient substitutions
+target		:cookingstep{recipeId}_{order} :CanBeSubstitutedBy :{substitutionId} . 
+source		SELECT "recipeId", "order", CONCAT('ingredientcategory', "substitutions") AS "substitutionId" FROM "IngredientAmounts" am
+			INNER JOIN "CookingSteps" cs ON cs."ingredients" = am."id"
+			WHERE "substitutions" IS NOT NULL
+
+mappingId	Recipe
+target		:recipe{id} a :Recipe ; :name {name} ; :servings {servings}^^xsd:nonNegativeInteger . 
+source		select "id", "name", "servings" from "Recipes"
+
+mappingId	CookingStep(WithIngredient)
+target		:recipe{recipeId} :ConsistsOf :cookingstep{recipeId}_{order} . :cookingstep{recipeId}_{order} a :CookingStep ; :order {order}^^xsd:nonNegativeInteger ; :timeRequired {time} ; :description {instructions} . 
+source		SELECT * FROM "CookingSteps"
+
+mappingId	Add Ingredient to IngredientCategory
+target		:ingredient{Ingredients_id} :BelongsTo :ingredientcategory{Categories_id} . 
+source		SELECT "Categories_id", "Ingredients_id"
+			FROM "Categories_has_Ingredients"
+
+mappingId	Add Recipe to MealCategory
+target		:recipe{Recipes_id} :InCategory :mealcategory{MealCategories_id} . 
+source		SELECT "Recipes_id", "MealCategories_id"
+			FROM "Recipes_has_MealCategories"
+
+mappingId	Restriction (DietsAndAllergies table)
+target		:restriction{id} a :Restriction ; :name {name} ; :description {description} ; :Forbids :ingredientcategory{categories} . 
+source		SELECT * FROM "DietsAndAllergies"
+
+mappingId	Recipe (isVegetarian)
+target		:recipe{id} :isVegetarian {isVegetarian}^^xsd:boolean . 
+source		SELECT "id", true as "isVegetarian" FROM "Recipes"
+			EXCEPT
+			(SELECT r."id", true FROM "Recipes" r
+			INNER JOIN "CookingSteps" cs ON r."id" = cs."recipeId"
+			INNER JOIN "IngredientAmounts" am ON am."id" = cs."ingredients"
+			INNER JOIN "Ingredients" i ON i."id" = am."ingredientId"
+			INNER JOIN "Categories_has_Ingredients" chi ON chi."Ingredients_id" = i."id"
+			INNER JOIN "DietsAndAllergies" daa ON daa."name" = 'Vegetarian' AND daa."categories" = chi."Categories_id")
+			UNION
+			(SELECT r."id", false as "isVegetarian" FROM "Recipes" r
+			INNER JOIN "CookingSteps" cs ON r."id" = cs."recipeId"
+			INNER JOIN "IngredientAmounts" am ON am."id" = cs."ingredients"
+			INNER JOIN "Ingredients" i ON i."id" = am."ingredientId"
+			INNER JOIN "Categories_has_Ingredients" chi ON chi."Ingredients_id" = i."id"
+			INNER JOIN "DietsAndAllergies" daa ON daa."name" = 'Vegetarian' AND daa."categories" = chi."Categories_id")
+]]
+

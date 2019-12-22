@@ -1,0 +1,275 @@
+@prefix : <http://example.com/thelastrecipe/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix tlr: <http://example.com/thelastrecipe#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix obda: <https://w3id.org/obda/vocabulary#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix w3xml: <http://www.w3.org/TR/xmlschema11-2#> .
+@base <http://example.com/thelastrecipe/> .
+
+<http://example.com/thelastrecipe/> rdf:type owl:Ontology .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  https://www.w3.org/TR/xmlschema11-2#duration
+<https://www.w3.org/TR/xmlschema11-2#duration> rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.com/thelastrecipe/BelongsTo
+:BelongsTo rdf:type owl:ObjectProperty ;
+           rdfs:domain :Ingredient ;
+           rdfs:range :IngredientCategory ;
+           rdfs:comment """An ingredient can belong to several ingredient categories.
+
+Example: pepper belongs to spices"""@en ;
+           rdfs:label "Belongs to"@en .
+
+
+###  http://example.com/thelastrecipe/CanBeSubstitutedBy
+:CanBeSubstitutedBy rdf:type owl:ObjectProperty ;
+                    rdfs:domain :CookingStepWithIngredient ;
+                    rdfs:range :IngredientCategory ;
+                    rdfs:comment """An ingredient can optionally be subsituted by ingredients from a certain category.
+
+Example: butter can be substituted by ingredients from the category 'grease'."""@en ;
+                    rdfs:label "Can be substituted by"@en .
+
+
+###  http://example.com/thelastrecipe/ConsistsOf
+:ConsistsOf rdf:type owl:ObjectProperty ;
+            rdfs:domain :Recipe ;
+            rdfs:range :CookingStep ;
+            rdfs:comment "A recipe consists of several cooking steps."@en ;
+            rdfs:label "Consists of"@en .
+
+
+###  http://example.com/thelastrecipe/Forbids
+:Forbids rdf:type owl:ObjectProperty ;
+         rdfs:domain :Restriction ;
+         rdfs:range :IngredientCategory ;
+         rdfs:comment """A restriction forbids the use of a category of ingredients.
+
+Example: 'lactose intolerance' forbids ingredients from category 'dairy'"""@en ;
+         rdfs:label "Forbids"@en .
+
+
+###  http://example.com/thelastrecipe/HasIngredient
+:HasIngredient rdf:type owl:ObjectProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain :CookingStepWithIngredient ;
+               rdfs:range :Ingredient ;
+               rdfs:comment "A CookingStepWithIngredient uses an ingredient."@en ;
+               rdfs:label "Has ingredient"@en .
+
+
+###  http://example.com/thelastrecipe/InCategory
+:InCategory rdf:type owl:ObjectProperty ;
+            rdfs:domain :Recipe ;
+            rdfs:range :MealCategory ;
+            rdfs:comment """A recipe belongs to a category of meals.
+
+Example: 'scrambled eggs' belongs to 'breakfast'"""@en ;
+            rdfs:label "In category"@en .
+
+
+###  http://example.com/thelastrecipe/UsesTool
+:UsesTool rdf:type owl:ObjectProperty ;
+          rdfs:domain :CookingStep ;
+          rdfs:range :Tool ;
+          rdfs:comment "A cooking step can use a tool (like a blender, for example)"@en ;
+          rdfs:label "Uses tool"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.com/thelastrecipe/amount
+:amount rdf:type owl:DatatypeProperty ,
+                 owl:FunctionalProperty ;
+        rdfs:domain :CookingStepWithIngredient ;
+        rdfs:range xsd:double ;
+        rdfs:comment """A CookingStepWithIngredient uses a certain amount of an ingredient.
+The unit of this amount is determined by the unit declared on the ingredient itself."""@en ;
+        rdfs:label "Amount of the ingredient"@en .
+
+
+###  http://example.com/thelastrecipe/calories
+:calories rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdf:type owl:FunctionalProperty ;
+          rdfs:range xsd:nonNegativeInteger ;
+          rdfs:comment """Ingredients and recipes contain a certain amount of calories. (unit: cal)
+For ingredients this is for every unit."""@en ;
+          rdfs:label "Number of calories per unit"@en .
+
+
+###  http://example.com/thelastrecipe/description
+:description rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf owl:topDataProperty ;
+             rdf:type owl:FunctionalProperty ;
+             rdfs:range xsd:string ;
+             rdfs:comment "A cooking step has a human-readable description."@en ;
+             rdfs:label "Description"@en .
+
+
+###  http://example.com/thelastrecipe/isVegetarian
+:isVegetarian rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdf:type owl:FunctionalProperty ;
+              rdfs:domain :Recipe ;
+              rdfs:range xsd:boolean ;
+              rdfs:comment "A recipe can be vegetarian or not."@en ;
+              rdfs:label "Vegetarian"@en .
+
+
+###  http://example.com/thelastrecipe/name
+:name rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty ;
+      rdf:type owl:FunctionalProperty ;
+      rdfs:range xsd:string ;
+      rdfs:comment "Tools, Recipes, Ingredients, MealCategories and IngredientCategories have a name."@en ;
+      rdfs:label "Name"@en .
+
+
+###  http://example.com/thelastrecipe/order
+:order rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdf:type owl:FunctionalProperty ;
+       rdfs:domain :CookingStep ;
+       rdfs:range xsd:positiveInteger ;
+       rdfs:comment "Cooking steps have an order. This is a positive integer that defines that order."@en ;
+       rdfs:label "Step order in the recipe"@en .
+
+
+###  http://example.com/thelastrecipe/price
+:price rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdf:type owl:FunctionalProperty ;
+       rdfs:domain :Recipe ;
+       rdfs:range xsd:decimal ;
+       rdfs:comment "A recipe can have a price to buy all the ingredients."@en ;
+       rdfs:label "Total price"@en .
+
+
+###  http://example.com/thelastrecipe/pricePerUnit
+:pricePerUnit rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdf:type owl:FunctionalProperty ;
+              rdfs:domain :Ingredient ;
+              rdfs:range xsd:decimal ;
+              rdfs:comment "An ingredient can have a price 1 unit of that ingredient."@en ;
+              rdfs:label "Price per unit"@en .
+
+
+###  http://example.com/thelastrecipe/proteins
+:proteins rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdf:type owl:FunctionalProperty ;
+          rdfs:range xsd:nonNegativeInteger ;
+          rdfs:comment """An ingredient can have a certain number of proteins (per unit of that ingredient).
+The unit for proteins is milligram (mg)."""@en ;
+          rdfs:label "Proteins per unit"@en .
+
+
+###  http://example.com/thelastrecipe/servings
+:servings rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdf:type owl:FunctionalProperty ;
+          rdfs:domain :Recipe ;
+          rdfs:range xsd:positiveInteger ;
+          rdfs:comment "A recipe can have a certain number of servings. (positive)"@en ;
+          rdfs:label "Servings"@en .
+
+
+###  http://example.com/thelastrecipe/timeRequired
+:timeRequired rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdf:type owl:FunctionalProperty ;
+              rdfs:range xsd:nonNegativeInteger ;
+              rdfs:comment "A cooking step has a certain amount of time needed to perform that step. (unit: minutes)"@en ;
+              rdfs:label "Time required"@en .
+
+
+###  http://example.com/thelastrecipe/unit
+:unit rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty ;
+      rdf:type owl:FunctionalProperty ;
+      rdfs:domain :Ingredient ;
+      rdfs:range xsd:string ;
+      rdfs:comment "An ingredient has a unit. (Example: cups of milk)"@en ;
+      rdfs:label "Unit of an ingredient"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.com/thelastrecipe/CookingStep
+:CookingStep rdf:type owl:Class ;
+             rdfs:comment "A cooking step is one step in a recipe."@en ;
+             rdfs:label "Cooking step"@en .
+
+
+###  http://example.com/thelastrecipe/CookingStepWithIngredient
+:CookingStepWithIngredient rdf:type owl:Class ;
+                           rdfs:subClassOf :CookingStep ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty :HasIngredient ;
+                                             owl:someValuesFrom :Ingredient
+                                           ] ;
+                           rdfs:comment "This kind of step in the recipe introduces a new ingredient to the process."@en ;
+                           rdfs:label "Cooking step with ingredient"@en .
+
+
+###  http://example.com/thelastrecipe/Ingredient
+:Ingredient rdf:type owl:Class ;
+            rdfs:comment """An ingredient is to be used in a cooking step,
+but only when it is introduced for the first time.
+
+For example: step one can use an onion and step two can use an onion.
+However, if the recipe only uses 1 onion, only the first step includes the onion.
+Later steps that use that same onion or some product derived from it do not."""@en ;
+            rdfs:label "Ingredient"@en .
+
+
+###  http://example.com/thelastrecipe/IngredientCategory
+:IngredientCategory rdf:type owl:Class ;
+                    rdfs:comment "An ingredient can belong to multiple ingredient categories."@en ;
+                    rdfs:label "Ingredient category"@en .
+
+
+###  http://example.com/thelastrecipe/MealCategory
+:MealCategory rdf:type owl:Class ;
+              rdfs:comment "A meal can belong to multiple meal categories. (e.g. breakfast)"@en ;
+              rdfs:label "Meal category"@en .
+
+
+###  http://example.com/thelastrecipe/Recipe
+:Recipe rdf:type owl:Class ;
+        rdfs:comment """A recipe documents how you can make a meal.
+It consists of multiple steps."""@en ;
+        rdfs:label "Recipe"@en .
+
+
+###  http://example.com/thelastrecipe/Restriction
+:Restriction rdf:type owl:Class ;
+             rdfs:comment "A restriction is a diet of allergy."@en ;
+             rdfs:label "Restriction"@en .
+
+
+###  http://example.com/thelastrecipe/Tool
+:Tool rdf:type owl:Class ;
+      rdfs:comment "A tool can be used in a CookingStep."@en ;
+      rdfs:label "Tool"@en .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

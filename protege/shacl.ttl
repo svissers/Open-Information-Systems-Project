@@ -1,0 +1,216 @@
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#>
+@prefix lr:   <http://example.com/thelastrecipe/> .
+
+lr:CookingStepShape
+    a sh:NodeShape ;
+    sh:targetClass lr:CookingStep ;
+    sh:property [
+        sh:path lr:order ;
+        sh:datatype xsd:nonNegativeInteger ;
+        sh:description "Every step must have an order" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:timeRequired ;
+        sh:datatype xsd:integer ;
+        sh:description "Every step must have time required" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:description ;
+        sh:datatype xsd:string ;
+        sh:description "Every step must have a non-empty description" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:amount ;
+        sh:datatype xsd:double;
+        sh:description "Every step may have an amount for the ingredient" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:UsesTool ;
+        sh:class lr:Tool ;
+        sh:description "Every step may use one tool" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:HasIngredient ;
+        sh:class lr:Ingredient ;
+        sh:description "Every step may have one ingredient" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:CanBeSubstitutedBy ;
+        sh:class lr:IngredientCategory ;
+        sh:description "Every step may have one ingredient" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:path owl:topDataProperty ;
+        sh:description "Some things Protege adds to our classes" ;
+    ] ;
+
+    sh:closed true .
+
+lr:CookingStepWithIngredientShape
+    a sh:NodeShape ;
+    sh:targetClass lr:CookingStepWithIngredient ;
+    sh:property [
+        sh:path lr:order ;
+        sh:datatype xsd:nonNegativeInteger ;
+        sh:description "Every step must have an order" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:timeRequired ;
+        sh:datatype xsd:integer ;
+        sh:description "Every step must have time required" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:description ;
+        sh:datatype xsd:string ;
+        sh:description "Every step must have a non-empty description" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:amount ;
+        sh:datatype xsd:double ;
+        sh:description "A step with ingredient must have a non-negative amount" ;
+        sh:minInclusive 0 ;
+        #sh:minCount 1 ; #TODO when protege doesnt make every step one with ingredient, uncomment this
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:UsesTool ;
+        sh:class lr:Tool ;
+        sh:description "Every step may use one tool" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:HasIngredient ;
+        sh:class lr:Ingredient ;
+        sh:description "Every step may have one ingredient" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:CanBeSubstitutedBy ;
+        sh:class lr:IngredientCategory ;
+        sh:description "Every step may have one ingredient" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:path owl:topDataProperty ;
+        sh:description "Some things Protege adds to our classes" ;
+    ] ;
+    sh:closed true .
+
+lr:ToolShape
+    a sh:NodeShape ;
+    sh:targetClass lr:Tool ;
+    sh:property [
+        sh:path lr:name ;
+        sh:datatype xsd:string ;
+        sh:description "Every tool must have a non-empty name" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:description ;
+        sh:datatype xsd:string ;
+        sh:description "Every tool can have a description" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:path owl:topDataProperty ;
+        sh:description "Some things Protege adds to our classes" ;
+    ] ;
+    sh:closed true .
+    
+lr:MealCategoryShape
+    a sh:NodeShape ;
+    sh:targetClass lr:MealCategory ;
+    sh:property [
+        sh:path lr:name ;
+        sh:datatype xsd:string ;
+        sh:description "Every meal category must have a non-empty name" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:description ;
+        sh:datatype xsd:string ;
+        sh:description "Every MealCategory can have a description" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:path owl:topDataProperty ;
+        sh:description "Some things Protege adds to our classes" ;
+    ] ;
+    sh:closed true .
+
+lr:IngredientCategoryShape
+    a sh:NodeShape ;
+    sh:targetClass lr:IngredientCategory ;
+    sh:property [
+        sh:path lr:name ;
+        sh:datatype xsd:string ;
+        sh:description "Every meal category must have a non-empty name" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path lr:description ;
+        sh:datatype xsd:string ;
+        sh:description "Every IngredientCategory can have a description" ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:path owl:topDataProperty ;
+        sh:description "Some things Protege adds to our classes" ;
+    ] ;
+    sh:closed true .
+
+lr:LabelAndCommentShape
+    a sh:NodeShape ;
+    sh:targetClass owl:ObjectProperty ;
+    sh:targetClass owl:DatatypeProperty;
+    sh:targetClass owl:Class;
+    sh:property [
+        sh:path rdfs:label ;
+        #sh:datatype xsd:string;
+        sh:description "Every instance must have a label" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path rdfs:comment ;
+        #sh:datatype xsd:string;
+        sh:description "Every instance must have a comment" ;
+        sh:minLength 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] .
